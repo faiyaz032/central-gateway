@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "lib": ["ES2015", "DOM"], // Include ES2015 for Promise support
     "rootDir": "./",
     "outDir": "./dist",
     "module": "commonjs",
