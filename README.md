@@ -1,47 +1,73 @@
 # Unified-Payments
 
-An unified payment gateway integration library for Bangladeshi payment providers. Currently supports AamarPay and SSLCommerz.
+A comprehensive payment gateway integration library for Bangladeshi payment providers, offering a unified interface for multiple payment gateways. This library simplifies payment processing by providing a consistent API across different payment providers, currently supporting AamarPay and SSLCommerz. The key advantage is that you don't need to read and adapt to multiple payment gateway documentations - our unified interface handles all the complexity for you.
+
+## Features
+
+- **Unified Interface**: Single, consistent API for multiple payment gateways - no need to learn different gateway-specific configurations
+- **Gateway Abstraction**: Handles all the complex gateway-specific implementations behind the scenes
+- **Type Safety**: Full TypeScript support with type definitions for all configurations
+- **Error Handling**: Robust error handling with detailed error types
+- **Multiple Gateways**: Currently supports AamarPay and SSLCommerz with the same configuration structure
+- **Extensible**: Modular design makes it easy to add new payment gateways
+- **Validation**: Built-in validation for payment parameters
+- **Environment Support**: Supports both sandbox and production environments
+- **Simple Integration**: One configuration pattern works across all supported payment gateways
 
 ## Installation
+
+Install the package using npm:
 
 ```bash
 npm install unified-payments
 ```
 
-or
+Or using yarn:
 
 ```bash
 yarn add unified-payments
 ```
 
-## Usage
+## Configuration
+
+### Initialize Payment Service
+
+Create a new instance of the payment service with your gateway credentials. The configuration structure remains consistent across all payment gateways:
 
 ```typescript
 import { PaymentService } from 'unified-payments';
 
-// Initialize the payment service
 const paymentService = new PaymentService({
-  //You can use either Aamarpay or SSLCommerz, or both.
-
+  // AamarPay Configuration
   aamarpay: {
     storeId: 'your-store-id',
     signatureKey: 'your-signature-key',
-    serverUrl: 'https://sandbox.aamarpay.com/request.php',
+    serverUrl: 'https://sandbox.aamarpay.com/request.php', // Use production URL for live environment
   },
 
+  // SSLCommerz Configuration - Notice how similar the configuration structure is
   sslcommerz: {
     storeId: 'your-store-id',
-    storePassword: 'your-signature-key',
-    sandbox: true,
+    storePassword: 'your-store-password',
+    isLive: false, // Set to true for production environment
   },
 });
+```
 
-// Process a payment
+You can configure either one or both gateways based on your needs. The library handles all the gateway-specific implementations internally, so you don't need to worry about different API structures or requirements.
+
+## Processing Payments
+
+### Basic Payment Processing
+
+The same payment processing code works for all gateways - just change the gateway name:
+
+```typescript
 const paymentUrl = await paymentService.processPayment({
-  gateway: 'aamarpay', //Switch your gateway here. It can be either 'aamarpay' or 'sslcommerz'.
+  gateway: 'aamarpay', // Simply change to 'sslcommerz' to use SSLCommerz instead
   amount: 1000,
   currency: 'BDT',
-  transactionId: 'unique-transaction-id',
+  transactionId: 'unique-transaction-id', // Must be unique for each transaction
   urls: {
     success: 'https://your-domain.com/success',
     fail: 'https://your-domain.com/fail',
@@ -66,13 +92,89 @@ const paymentUrl = await paymentService.processPayment({
 });
 ```
 
-## Features
+### Advanced Usage
 
-- Unified interface for multiple payment gateways
-- Type-safe configurations
-- Error handling with custom error types
-- Supports AamarPay and SSLCommerz
-- Easy to extend for additional gateways
+#### Custom Error Handling
+
+Consistent error handling across all payment gateways:
+
+```typescript
+import { PaymentError } from 'unified-payments';
+
+try {
+  const paymentUrl = await paymentService.processPayment({
+    // payment details...
+  });
+  // Redirect user to paymentUrl
+} catch (error) {
+  if (error instanceof PaymentError) {
+    console.error('Payment processing failed:', error.message);
+    console.error('Error code:', error.code);
+    console.error('Gateway:', error.gateway);
+  }
+}
+```
+
+#### Environment-Specific Configuration
+
+```typescript
+const paymentService = new PaymentService({
+  aamarpay: {
+    storeId: process.env.AAMARPAY_STORE_ID,
+    signatureKey: process.env.AAMARPAY_SIGNATURE_KEY,
+    serverUrl:
+      process.env.NODE_ENV === 'production'
+        ? 'https://secure.aamarpay.com/request.php'
+        : 'https://sandbox.aamarpay.com/request.php',
+  },
+});
+```
+
+## Types
+
+### Payment Configuration
+
+The same configuration type works across all supported gateways:
+
+```typescript
+interface PaymentConfig {
+  gateway: 'aamarpay' | 'sslcommerz';
+  amount: number;
+  currency: string;
+  transactionId: string;
+  urls: {
+    success: string;
+    fail: string;
+    cancel: string;
+  };
+  product: {
+    name: string;
+    description?: string;
+  };
+  customer: {
+    name: string;
+    email: string;
+    phone: string;
+    address: {
+      line1: string;
+      city: string;
+      state: string;
+      postcode: string;
+      country: string;
+    };
+  };
+}
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b gateway/stripe`)
+3. Commit your changes (`git commit -m 'Add a gateway'`)
+4. Push to the branch (`git push origin gateway/stripe`)
+5. Open a Pull Request
 
 ## License
 
