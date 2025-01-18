@@ -1,7 +1,7 @@
 {
   "name": "unified-payments",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "dist/src/index.js",
   "author": "Faiyaz Rahman",
   "license": "MIT",
   "scripts": {
