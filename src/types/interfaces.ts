@@ -7,7 +7,7 @@ export interface PaymentGatewayConfig {
   sslcommerz?: {
     storeId: string;
     storePassword: string;
-    testMode?: boolean;
+    isLive?: boolean;
   };
 }
 

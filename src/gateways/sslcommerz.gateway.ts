@@ -6,19 +6,19 @@ import { BaseGateway } from './base.gateway';
 export class SslCommerzGateway extends BaseGateway {
   private readonly storeId: string;
   private readonly storePassword: string;
-  private readonly testMode: boolean;
+  private readonly isLive: boolean;
 
-  constructor(config: { storeId: string; storePassword: string; testMode?: boolean }) {
+  constructor(config: { storeId: string; storePassword: string; isLive?: boolean }) {
     super();
     this.storeId = config.storeId;
     this.storePassword = config.storePassword;
-    this.testMode = config.testMode ?? false;
+    this.isLive = config.isLive || false;
   }
 
   async processPayment(data: PaymentData): Promise<string> {
     try {
       const sslcommerzData = this.mapToSslCommerz(data);
-      const sslcommerz = new SslCommerzPayment(this.storeId, this.storePassword, this.testMode);
+      const sslcommerz = new SslCommerzPayment(this.storeId, this.storePassword, this.isLive);
 
       const response = await sslcommerz.init(sslcommerzData);
       const gatewayPageUrl = response?.GatewayPageURL;
