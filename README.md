@@ -1,6 +1,6 @@
 # Unified-Payments
 
-A comprehensive payment gateway integration library for Bangladeshi payment providers, offering a unified interface for multiple payment gateways. This library simplifies payment processing by providing a consistent API across different payment providers, currently supporting AamarPay and SSLCommerz. The key advantage is that you don't need to read and adapt to multiple payment gateway documentations - our unified interface handles all the complexity for you.
+Simplify payments in Bangladesh with one unified library for AamarPay, SSLCommerz, and more. Skip the hassle of multiple gateway documentations—our consistent API does it all for you!
 
 ## Features
 
