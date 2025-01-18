@@ -1,12 +1,13 @@
 {
   "name": "unified-payments",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "author": "Faiyaz Rahman",
   "license": "MIT",
   "scripts": {
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "prepare": "npm run build"
   },
   "engines": {
     "node": ">=18.x"
@@ -17,11 +18,14 @@
   "devDependencies": {
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.7.3"
+    "ts-node-dev": "^2.0.0"
   },
   "dependencies": {
-    "sslcommerz": "^1.7.0"
+    "sslcommerz": "^1.7.0",
+    "typescript": "^5.7.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.7.3"
   },
   "keywords": [
     "payment",
