@@ -1,6 +1,6 @@
 {
-  "name": "unified-payments",
-  "version": "1.0.10",
+  "name": "central-gateway",
+  "version": "1.0.0",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "author": "Faiyaz Rahman",
@@ -13,7 +13,7 @@
     "node": ">=18.x"
   },
   "repository": {
-    "url": "https://github.com/faiyaz032/unified-payments"
+    "url": "https://github.com/faiyaz032/central-gateway"
   },
   "devDependencies": {
     "typescript": "^5.7.3"

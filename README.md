@@ -1,4 +1,4 @@
-# Unified-Payments
+# Central Gateway
 
 Simplify payments in Bangladesh with one unified library for AamarPay, SSLCommerz, and more. Skip the hassle of multiple gateway documentations—our consistent API does it all for you!
 
@@ -19,13 +19,13 @@ Simplify payments in Bangladesh with one unified library for AamarPay, SSLCommer
 Install the package using npm:
 
 ```bash
-npm install unified-payments
+npm install central-gateway
 ```
 
 Or using yarn:
 
 ```bash
-yarn add unified-payments
+yarn add central-gateway
 ```
 
 ## Configuration
@@ -35,7 +35,7 @@ yarn add unified-payments
 Create a new instance of the payment service with your gateway credentials. The configuration structure remains consistent across all payment gateways:
 
 ```typescript
-import { PaymentService } from 'unified-payments';
+import { PaymentService } from 'central-gateway';
 
 const paymentService = new PaymentService({
   // AamarPay Configuration
@@ -99,7 +99,7 @@ const paymentUrl = await paymentService.processPayment({
 Consistent error handling across all payment gateways:
 
 ```typescript
-import { PaymentError } from 'unified-payments';
+import { PaymentError } from 'central-gateway';
 
 try {
   const paymentUrl = await paymentService.processPayment({
