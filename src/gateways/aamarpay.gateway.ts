@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { PaymentError } from '../errors/PaymentError';
 import { AamarPayData, PaymentData } from '../types/interfaces';
 import { BaseGateway } from './base.gateway';
@@ -18,11 +17,21 @@ export class AamarPayGateway extends BaseGateway {
   async processPayment(data: PaymentData): Promise<string> {
     try {
       const aamarpayData = this.mapToAamarPay(data);
-      const response = await axios.post(this.serverUrl, aamarpayData, {
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(this.serverUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(aamarpayData),
       });
 
-      const paymentUrl = response?.data?.payment_url;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      const paymentUrl = responseData?.payment_url;
+
       if (!paymentUrl) {
         throw new PaymentError(500, 'Aamarpay session was not successful. No payment URL returned.');
       }
