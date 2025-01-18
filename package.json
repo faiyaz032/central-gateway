@@ -1,6 +1,6 @@
 {
   "name": "unified-payments",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "author": "Faiyaz Rahman",
@@ -16,17 +16,14 @@
     "url": "https://github.com/faiyaz032/unified-payments"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0"
+    "typescript": "^5.7.3"
   },
   "dependencies": {
-    "sslcommerz": "^1.7.0",
-    "typescript": "^5.7.3"
+    "sslcommerz": "^1.7.0"
   },
-  "peerDependencies": {
-    "typescript": "^5.7.3"
-  },
+  "files": [
+    "dist/"
+  ],
   "keywords": [
     "payment",
     "payment-gateway",
