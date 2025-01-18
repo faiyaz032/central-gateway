@@ -1,15 +1,12 @@
 {
   "name": "unified-payments",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "author": "Faiyaz Rahman",
   "license": "MIT",
   "scripts": {
-    "start": "node ./dist/src/index.js",
-    "build": "tsc --build",
-    "postinstall": "npm run build",
-    "dev": "ts-node-dev --respawn --transpile-only --poll ./src/index.ts"
+    "build": "tsc --build"
   },
   "engines": {
     "node": ">=18.x"
