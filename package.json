@@ -1,6 +1,6 @@
 {
   "name": "central-gateway",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "author": "Faiyaz Rahman",
@@ -12,6 +12,7 @@
   "engines": {
     "node": ">=18.x"
   },
+  "homepage": "https://faiyaz032.github.io/central-gateway-docs",
   "repository": {
     "url": "https://github.com/faiyaz032/central-gateway"
   },

@@ -4,17 +4,19 @@ Simplify payments in Bangladesh with one unified library for AamarPay, SSLCommer
 
 ## Features
 
-- **Unified Interface**: Single, consistent API for multiple payment gateways - no need to learn different gateway-specific configurations
-- **Gateway Abstraction**: Handles all the complex gateway-specific implementations behind the scenes
-- **Type Safety**: Full TypeScript support with type definitions for all configurations
-- **Error Handling**: Robust error handling with detailed error types
-- **Multiple Gateways**: Currently supports AamarPay and SSLCommerz with the same configuration structure
-- **Extensible**: Modular design makes it easy to add new payment gateways
-- **Validation**: Built-in validation for payment parameters
-- **Environment Support**: Supports both sandbox and production environments
-- **Simple Integration**: One configuration pattern works across all supported payment gateways
+- **Unified Interface**: Single, consistent Interface for multiple payment gateways.
+- **Gateway Abstraction**: Handles gateway-specific complexities behind the scenes.
+- **Type Safety**: Full TypeScript support for a seamless development experience.
+- **Error Handling**: Robust error handling with detailed error types to ensure reliability.
+- **Multiple Gateways**: Supports AamarPay, SSLCommerz, and bKash out of the box.
+- **Extensible**: Modular design allows for the easy addition of new gateways.
+- **Validation**: Built-in validation for payment parameters to prevent errors.
+- **Environment Support**: Easily toggle between sandbox and production environments.
+- **Simple Integration**: One configuration pattern for all gateways simplifies setup.
 
 ## Installation
+
+Install the package using npm or yarn:
 
 ```bash
 npm install central-gateway
@@ -22,9 +24,9 @@ npm install central-gateway
 yarn add central-gateway
 ```
 
-## SSLCommerz Integration
+## Configuration
 
-### Configuration
+To use the library, initialize a payment service instance with the required configurations for your gateways:
 
 ```typescript
 import { PaymentService } from 'central-gateway';
@@ -35,99 +37,11 @@ const paymentService = new PaymentService({
     storePassword: 'your-store-password',
     sandbox: true, // Set to false for production
   },
-});
-```
-
-### Process Payment
-
-```typescript
-const sslcommerz = paymentService.getGateway('sslcommerz');
-
-const paymentUrl = await sslcommerz.processPayment({
-  amount: 50,
-  currency: 'BDT',
-  transactionId: 'unique-transaction-id',
-  urls: {
-    success: 'https://your-app.com/success',
-    fail: 'https://your-app.com/fail',
-    cancel: 'https://your-app.com/cancel',
-    ipn: 'https://your-app.com/ipn',
-  },
-  product: {
-    name: 'Product Name',
-    category: 'Category',
-    description: 'Product Description',
-  },
-  customer: {
-    name: 'Customer Name',
-    email: 'customer@email.com',
-    phone: '01XXXXXXXXX',
-    address: {
-      line1: 'Address Line 1',
-      city: 'City',
-      state: 'State',
-      postcode: '1234',
-      country: 'Bangladesh',
-    },
-  },
-});
-```
-
-## AamarPay Integration
-
-### Configuration
-
-```typescript
-const paymentService = new PaymentService({
   aamarpay: {
     storeId: 'your-store-id',
     signatureKey: 'your-signature-key',
-    serverUrl: 'https://sandbox.aamarpay.com/jsonpost.php', // Use production URL for live
+    serverUrl: 'https://sandbox.aamarpay.com/jsonpost.php',
   },
-});
-```
-
-### Process Payment
-
-```typescript
-const aamarpay = paymentService.getGateway('aamarpay');
-
-const paymentUrl = await aamarpay.processPayment({
-  amount: 50,
-  currency: 'BDT',
-  transactionId: 'unique-transaction-id',
-  urls: {
-    success: 'https://your-app.com/success',
-    fail: 'https://your-app.com/fail',
-    cancel: 'https://your-app.com/cancel',
-    ipn: 'https://your-app.com/ipn',
-  },
-  product: {
-    name: 'Product Name',
-    category: 'Category',
-    description: 'Product Description',
-  },
-  customer: {
-    name: 'Customer Name',
-    email: 'customer@email.com',
-    phone: '01XXXXXXXXX',
-    address: {
-      line1: 'Address Line 1',
-      city: 'City',
-      state: 'State',
-      postcode: '1234',
-      country: 'Bangladesh',
-    },
-  },
-});
-```
-
-## bKash Integration
-
-### Configuration
-
-```typescript
-const paymentService = new PaymentService({
   bkash: {
     username: 'your-username',
     password: 'your-password',
@@ -138,18 +52,17 @@ const paymentService = new PaymentService({
 });
 ```
 
-### 1. Process Payment
+## Preparing Payment Data
+
+Before initiating a payment, prepare the payment data with all the required properties. This ensures consistency and avoids repetitive code. Here’s an example:
 
 ```typescript
-const bkash = paymentService.getGateway('bkash');
-
-const paymentUrl = await bkash.processPayment({
+const paymentData = {
   amount: 50,
   currency: 'BDT',
   transactionId: 'unique-transaction-id',
   urls: {
     success: 'https://your-app.com/success',
-    callback: 'https://your-app.com/api/payments/execute', // Important: This URL will receive the paymentID
     fail: 'https://your-app.com/fail',
     cancel: 'https://your-app.com/cancel',
     ipn: 'https://your-app.com/ipn',
@@ -171,31 +84,61 @@ const paymentUrl = await bkash.processPayment({
       country: 'Bangladesh',
     },
   },
-});
+};
 ```
 
-### 2. Execute Payment
+## Processing Payments
 
-After the user completes payment, bKash will redirect to your callback URL with a `paymentID`. You must execute the payment to complete the transaction:
+Once the payment data is prepared, select the desired gateway and process the payment. Here’s an example for both SSLCommerz and AamarPay:
+
+### Using SSLCommerz
 
 ```typescript
-// In your callback route handler:
-const bkash = paymentService.getGateway('bkash');
+const sslcommerzGateway = paymentService.getGateway('sslcommerz');
+const sslcommerzUrl = await sslcommerzGateway.processPayment(paymentData);
 
-// paymentID comes from the URL query parameter
-const executionResponse = await bkash.executePayment(paymentID);
+console.log('Redirect to:', sslcommerzUrl);
 ```
 
-### 3. Query Payment Status (Optional)
+### Using AamarPay
 
 ```typescript
-const bkash = paymentService.getGateway('bkash');
-const paymentStatus = await bkash.queryPayment(paymentID);
+const aamarpayGateway = paymentService.getGateway('aamarpay');
+const aamarpayUrl = await aamarpayGateway.processPayment(paymentData);
+
+console.log('Redirect to:', aamarpayUrl);
 ```
 
-## Error Handling
+### Using Bkash
 
-All gateways use the same error handling pattern:
+```typescript
+const bkashGateway = paymentService.getGateway('bkash');
+const bkashUrl = await bkashGateway.processPayment(paymentData);
+
+console.log('Redirect to:', bkashUrl);
+```
+
+#### bKash-Specific Steps
+
+For bKash, you need additional steps to execute and query payments:
+
+1. Execute the payment in your `callbackUrl` handler:
+
+```typescript
+const { paymentID } = req.query;
+const bkashGateway = paymentService.getGateway('bkash');
+const executionResponse = await bkashGateway.executePayment(paymentID); // paymentID from callback
+```
+
+2. You can query payment if you need to like this (Optional):
+
+```typescript
+const payment = await bkashGateway.queryPayment(paymentID);
+```
+
+## Unified Error Handling
+
+Handle errors consistently across all gateways:
 
 ```typescript
 try {
@@ -212,6 +155,8 @@ try {
 
 ## Type Definitions
 
+Here's the type definition for `PaymentData` to guide your implementation:
+
 ```typescript
 interface PaymentData {
   amount: number;
@@ -219,10 +164,10 @@ interface PaymentData {
   transactionId: string;
   urls: {
     success: string;
-    callback?: string; // Required for bKash
     fail: string;
     cancel: string;
     ipn?: string;
+    callback?: string; // Required for bKash
   };
   product: {
     name: string;
