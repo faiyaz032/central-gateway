@@ -1,42 +1,49 @@
 import { PaymentError } from './errors/PaymentError';
-import { PaymentData, PaymentGatewayConfig } from './types/interfaces';
+import { GatewayInstances, GatewayNames, PaymentGatewayConfig } from './types/interfaces';
 
 export class PaymentService {
-  private config: PaymentGatewayConfig;
-  private gateways: Map<string, any> = new Map();
+  private gateways: Map<GatewayNames, GatewayInstances[GatewayNames]> = new Map();
 
   constructor(config: PaymentGatewayConfig) {
-    this.config = config;
-    this.initializeGateways();
+    // Initialize gateways asynchronously
+    this.initializeGateways(config).catch((error) => {
+      throw new PaymentError(500, `Failed to initialize payment gateways: ${error.message}`);
+    });
   }
 
-  private async initializeGateways() {
-    if (this.config.aamarpay) {
+  /**
+   * Dynamically import and initialize payment gateways.
+   * @param config The payment gateway configuration.
+   */
+  private async initializeGateways(config: PaymentGatewayConfig) {
+    if (config.aamarpay) {
       const { AamarPayGateway } = await import('./gateways/aamarpay.gateway');
-      this.gateways.set('aamarpay', new AamarPayGateway(this.config.aamarpay));
+      this.gateways.set('aamarpay', new AamarPayGateway(config.aamarpay) as GatewayInstances['aamarpay']);
     }
 
-    if (this.config.sslcommerz) {
+    if (config.sslcommerz) {
       const { SslCommerzGateway } = await import('./gateways/sslcommerz.gateway');
-      this.gateways.set('sslcommerz', new SslCommerzGateway(this.config.sslcommerz));
+      this.gateways.set('sslcommerz', new SslCommerzGateway(config.sslcommerz) as GatewayInstances['sslcommerz']);
+    }
+
+    if (config.bkash) {
+      const { BkashGateway } = await import('./gateways/bkash.gateway');
+      this.gateways.set('bkash', new BkashGateway(config.bkash) as GatewayInstances['bkash']);
     }
   }
 
-  async processPayment(data: PaymentData): Promise<string> {
-    if (!data.gateway) {
-      throw new PaymentError(400, 'Payment gateway not specified');
-    }
-
-    const gateway = this.gateways.get(data.gateway);
+  /**
+   * Get a specific payment gateway instance.
+   * @param gatewayName The name of the payment gateway.
+   * @returns The gateway instance.
+   * @throws PaymentError if the gateway is not configured.
+   */
+  public getGateway<K extends GatewayNames>(gatewayName: K): GatewayInstances[K] {
+    const gateway = this.gateways.get(gatewayName);
     if (!gateway) {
-      throw new PaymentError(400, `Unsupported payment gateway: ${data.gateway}`);
+      throw new PaymentError(400, `Payment gateway ${gatewayName} is not configured`);
     }
-
-    try {
-      return await gateway.processPayment(data);
-    } catch (error: any) {
-      throw new PaymentError(error.code || 500, `Payment processing failed: ${error.message}`, error.data);
-    }
+    return gateway as GatewayInstances[K];
   }
 }
 

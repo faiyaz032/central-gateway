@@ -1,3 +1,15 @@
+import { AamarPayGateway } from '../gateways/aamarpay.gateway';
+import { BkashGateway } from '../gateways/bkash.gateway';
+import { SslCommerzGateway } from '../gateways/sslcommerz.gateway';
+
+export type GatewayNames = 'aamarpay' | 'sslcommerz' | 'bkash';
+
+export type GatewayInstances = {
+  aamarpay: AamarPayGateway;
+  sslcommerz: SslCommerzGateway;
+  bkash: BkashGateway;
+};
+
 export interface PaymentGatewayConfig {
   aamarpay?: {
     storeId: string;
@@ -8,6 +20,13 @@ export interface PaymentGatewayConfig {
     storeId: string;
     storePassword: string;
     isLive?: boolean;
+  };
+  bkash?: {
+    username: string;
+    password: string;
+    appKey: string;
+    appSecret: string;
+    isSandbox?: boolean;
   };
 }
 
@@ -56,16 +75,29 @@ export interface SslCommerzData {
   shipping_method?: string;
 }
 
+export interface BkashData {
+  mode: string;
+  payerReference: string;
+  callbackURL: string;
+  amount: string;
+  currency: string;
+  intent: string;
+  merchantInvoiceNumber: string;
+}
+
+//Unified Payment Data
 export interface PaymentData {
   amount: number;
   currency: string;
   transactionId: string;
   urls: {
-    success: string;
-    fail: string;
-    cancel: string;
+    callback?: string;
+    success?: string;
+    fail?: string;
+    cancel?: string;
     ipn?: string;
   };
+
   product: {
     name: string;
     category?: string;
@@ -84,5 +116,33 @@ export interface PaymentData {
       country: string;
     };
   };
-  gateway?: 'aamarpay' | 'sslcommerz';
+}
+export interface BkashExecutePaymentResponse {
+  statusCode: string;
+  statusMessage: string;
+  paymentID: string;
+  payerReference: string;
+  customerMsisdn: string;
+  trxID: string;
+  amount: string;
+  transactionStatus: 'Completed' | 'Failed' | 'Canceled';
+  paymentExecuteTime: string;
+  currency: string;
+  intent: string;
+  merchantInvoiceNumber: string;
+}
+
+export interface BkashQueryPaymentResponse {
+  statusCode: string;
+  statusMessage: string;
+  paymentID: string;
+  trxID: string;
+  transactionStatus: 'Completed' | 'Failed' | 'Canceled';
+  amount: string;
+  currency: string;
+  intent: string;
+  merchantInvoiceNumber: string;
+  updateTime: string;
+  payerReference: string;
+  customerMsisdn: string;
 }
